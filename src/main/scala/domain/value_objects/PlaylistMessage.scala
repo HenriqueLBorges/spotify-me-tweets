@@ -1,21 +1,49 @@
 package domain.value_objects
-import io.circe.Json
 
-case class NewPlaylist(to: String, key: String, content: Array[Byte]) extends IMessage {
-  override def toByteArray(): Array[Byte] = {
+import io.circe.{Decoder, Encoder, HCursor, Json}
 
+case class PlaylistMessage(key: String, link: String) extends AbstractMessage[PlaylistMessage] with IMessage {
+
+  override def getKey(): String = {
+    this.key
   }
 
   override def toJson(): Json = {
-    implicit val encoderLog = new Encoder[NewPlaylist]() {
-      final def apply(obj: Log): Json = Json.obj(
-        ("endpoint", Json.fromString(obj.endpoint)),
-        ("ip", Json.fromString(obj.ip)),
-        ("method", Json.fromString(obj.method)),
-        ("reply_time", Json.fromBigDecimal(obj.replyTime.inMilliseconds)),
-        ("response", Some(obj.reply).asJson),
-        ("error", Some(obj.exception).asJson)
+    this.convertToJson(this)
+  }
+
+  override def toJsonByteArray(): Array[Byte] = {
+    this.toJson().noSpaces.getBytes()
+  }
+
+  override def getEncoder(): Encoder[PlaylistMessage] = {
+    PlaylistMessage.getEncoder()
+  }
+
+  override def getDecoder(): Decoder[PlaylistMessage] = {
+    PlaylistMessage.getDecoder()
+  }
+}
+
+object PlaylistMessage extends AbstractMessage [PlaylistMessage]{
+
+  override def getEncoder(): Encoder[PlaylistMessage] = {
+    obj: PlaylistMessage =>
+      Json.obj(
+        ("key", Json.fromString(obj.key)),
+        ("link", Json.fromString(obj.link))
       )
+  }
+
+  override def getDecoder(): Decoder[PlaylistMessage] = {
+    new Decoder[PlaylistMessage] {
+      final def apply(obj: HCursor): Decoder.Result[PlaylistMessage] =
+        for {
+          key <- obj.downField("key").as[String]
+          link <- obj.downField("link").as[String]
+        } yield {
+          PlaylistMessage(key, link)
+        }
     }
   }
 }
