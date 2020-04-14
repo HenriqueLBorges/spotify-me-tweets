@@ -6,21 +6,24 @@ import com.danielasfregola.twitter4s.TwitterStreamingClient
 import domain.entities.Tweet
 import domain.value_objects.TwitterKeys
 import ports.TwitterPort
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-case class TwitterAdapter (twitterKeys: TwitterKeys)  extends TwitterPort {
-  val consumerToken = ConsumerToken(key = twitterKeys.consumerKey, secret = twitterKeys.consumerSecret)
-  val accessToken = AccessToken(key = twitterKeys.accessTokenKey, secret = twitterKeys.accessTokenSecret)
-  val streamClient = TwitterStreamingClient(consumerToken, accessToken)
-  val restClient = TwitterRestClient(consumerToken, accessToken)
+case class TwitterAdapter (twitterKeys: TwitterKeys) extends TwitterPort {
+  private val consumerToken = ConsumerToken(key = twitterKeys.consumerKey, secret = twitterKeys.consumerSecret)
+  private val accessToken = AccessToken(key = twitterKeys.accessTokenKey, secret = twitterKeys.accessTokenSecret)
+  private val streamClient = TwitterStreamingClient(consumerToken, accessToken)
+  private val restClient = TwitterRestClient(consumerToken, accessToken)
 
-  override def openStream(hashtags: List[String], handler: Tweet => Unit): Unit = {
+  override def openStream(hashtags: List[String], handler: Tweet => Unit): Future[Unit] = Future {
     streamClient.filterStatuses(tracks = hashtags) {
       case tweet: com.danielasfregola.twitter4s.entities.Tweet => handler(toTweetEntity(tweet))
     }
   }
 
   override def post(tweet: Tweet, replyTo: Option[Long]): Unit = {
-    restClient.createTweet(tweet.content, replyTo)
+    println("Will post the tweet! Tweet =", tweet.content)
+    restClient.createTweet(tweet.content, Option.empty)
   }
 
   def toTweetEntity(fromStream: com.danielasfregola.twitter4s.entities.Tweet): Tweet ={

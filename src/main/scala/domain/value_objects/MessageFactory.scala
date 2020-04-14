@@ -1,8 +1,10 @@
 package domain.value_objects
+
 import io.circe.parser._
 import io.circe.{Decoder, Encoder, Json}
 
 case class MessageFactory[A] (enconder: Encoder[A], decoder: Decoder[A]){
+
   def convertJsonStringToJson(message: String): Json = {
     parse(message).getOrElse(Json.Null)
   }
@@ -13,6 +15,8 @@ case class MessageFactory[A] (enconder: Encoder[A], decoder: Decoder[A]){
   }
 
   def convertStringToMessage(message: String): Option[A] = {
+    println("convertJsonToMessage(convertJsonStringToJson(message)) =", convertJsonToMessage(convertJsonStringToJson(message)))
     convertJsonToMessage(convertJsonStringToJson(message))
   }
+
 }

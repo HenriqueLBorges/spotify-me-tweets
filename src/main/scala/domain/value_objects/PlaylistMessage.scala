@@ -2,11 +2,7 @@ package domain.value_objects
 
 import io.circe.{Decoder, Encoder, HCursor, Json}
 
-case class PlaylistMessage(key: String, link: String) extends AbstractMessage[PlaylistMessage] with IMessage {
-
-  override def getKey(): String = {
-    this.key
-  }
+case class PlaylistMessage(key: String, value: String) extends AbstractMessage[PlaylistMessage] with IMessage {
 
   override def toJson(): Json = {
     this.convertToJson(this)
@@ -31,7 +27,7 @@ object PlaylistMessage extends AbstractMessage [PlaylistMessage]{
     obj: PlaylistMessage =>
       Json.obj(
         ("key", Json.fromString(obj.key)),
-        ("link", Json.fromString(obj.link))
+        ("value", Json.fromString(obj.value))
       )
   }
 
@@ -40,7 +36,7 @@ object PlaylistMessage extends AbstractMessage [PlaylistMessage]{
       final def apply(obj: HCursor): Decoder.Result[PlaylistMessage] =
         for {
           key <- obj.downField("key").as[String]
-          link <- obj.downField("link").as[String]
+          link <- obj.downField("value").as[String]
         } yield {
           PlaylistMessage(key, link)
         }
