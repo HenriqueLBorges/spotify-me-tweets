@@ -2,27 +2,41 @@ package domain.value_objects
 
 import io.circe.{Decoder, Encoder, HCursor, Json}
 
+/** Playlist Message
+ */
 case class PlaylistMessage(key: String, value: String) extends AbstractMessage[PlaylistMessage] with IMessage {
 
+  /** Converts the playlist message to JSON
+   */
   override def toJson(): Json = {
     this.convertToJson(this)
   }
 
+  /** Converts the playlist message to JSON byte array.
+   */
   override def toJsonByteArray(): Array[Byte] = {
     this.toJson().noSpaces.getBytes()
   }
 
+  /** Get the playlist message encoder.
+   */
   override def getEncoder(): Encoder[PlaylistMessage] = {
     PlaylistMessage.getEncoder()
   }
 
+  /** Get the playlist message decoder.
+   */
   override def getDecoder(): Decoder[PlaylistMessage] = {
     PlaylistMessage.getDecoder()
   }
 }
 
+/** Playlist Message Object
+ */
 object PlaylistMessage extends AbstractMessage [PlaylistMessage]{
 
+  /** Get the playlist message encoder.
+   */
   override def getEncoder(): Encoder[PlaylistMessage] = {
     obj: PlaylistMessage =>
       Json.obj(
@@ -31,6 +45,8 @@ object PlaylistMessage extends AbstractMessage [PlaylistMessage]{
       )
   }
 
+  /** Get the playlist message decoder.
+   */
   override def getDecoder(): Decoder[PlaylistMessage] = {
     new Decoder[PlaylistMessage] {
       final def apply(obj: HCursor): Decoder.Result[PlaylistMessage] =

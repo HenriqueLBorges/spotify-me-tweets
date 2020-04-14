@@ -5,27 +5,42 @@ import domain.entities.Tweet
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder, HCursor, Json}
 
+/** Tweet message.
+ */
 case class TweetMessage(key: String, value: Tweet) extends AbstractMessage[TweetMessage] with IMessage {
 
+  /** Returns the JSON encoder for this message.
+   */
   override def getEncoder(): Encoder[TweetMessage] = {
     TweetMessage.getEncoder()
   }
 
+  /** Returns the JSON decoder for this message.
+   */
   override def getDecoder(): Decoder[TweetMessage] = {
     TweetMessage.getDecoder()
   }
 
+  /** Convert this message to JSON and then to byte array.
+   */
   override def toJsonByteArray(): Array[Byte] = {
     this.toJson().noSpaces.getBytes()
   }
 
+  /** Convert this message to JSON.
+   */
   override def toJson(): Json = {
     this.convertToJson(this)
   }
 
 }
 
+/** Tweet message object.
+ */
 object TweetMessage extends AbstractMessage [TweetMessage]{
+
+  /** Creates a tweet encoder for this message.
+   */
   def getTweetEncoder(): Encoder[Tweet] = {
     obj: Tweet =>
       Json.obj(
@@ -39,6 +54,8 @@ object TweetMessage extends AbstractMessage [TweetMessage]{
       )
   }
 
+  /** Creates a tweet decoder for this message.
+   */
   def getTweetDecoder(): Decoder[Tweet] = {
     new Decoder[Tweet] {
       final def apply(obj: HCursor): Decoder.Result[Tweet] =
@@ -56,6 +73,8 @@ object TweetMessage extends AbstractMessage [TweetMessage]{
     }
   }
 
+  /** Creates a tweet message encoder for this message.
+   */
   override def getEncoder(): Encoder[TweetMessage] = {
     obj: TweetMessage =>
       Json.obj(
@@ -64,6 +83,8 @@ object TweetMessage extends AbstractMessage [TweetMessage]{
       )
   }
 
+  /** Creates a tweet message decoder for this message.
+   */
   override def getDecoder(): Decoder[TweetMessage] = {
     implicit val tweetDecoder = getTweetDecoder()
     new Decoder[TweetMessage] {
