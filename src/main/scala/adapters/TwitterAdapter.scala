@@ -3,9 +3,13 @@ package adapters
 import com.danielasfregola.twitter4s.entities.{AccessToken, ConsumerToken}
 import com.danielasfregola.twitter4s.TwitterRestClient
 import com.danielasfregola.twitter4s.TwitterStreamingClient
-import domain.entities.Tweet
+import domain.entities.{Tweet, TwitterUser}
 import domain.value_objects.TwitterKeys
+import java.time.Instant
+
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport.ShouldWritePretty.False
 import ports.TwitterPort
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -36,12 +40,23 @@ case class TwitterAdapter (twitterKeys: TwitterKeys) extends TwitterPort {
   }
 
   /** Converts a tweet to tweet entity.
-   *  @param fromStream the tweet tha came from stream.
+   *  @param fromStream the tweet that came from stream.
    */
-  def toTweetEntity(fromStream: com.danielasfregola.twitter4s.entities.Tweet): Tweet ={
-    val user = fromStream.user.getOrElse("").toString
+  def toTweetEntity(fromStream: com.danielasfregola.twitter4s.entities.Tweet): Tweet = {
+    val user = getTweetAuthor(fromStream)
     Tweet(fromStream.id, fromStream.text, user, fromStream.favorite_count,
       fromStream.retweet_count, fromStream.retweeted, fromStream.created_at)
+  }
+
+  /** Creates a twitter user entity using info from the tweet that came from the stream.
+   *  @param tweet the tweet that came from stream.
+   */
+  def getTweetAuthor(tweet: com.danielasfregola.twitter4s.entities.Tweet): TwitterUser = {
+    tweet.user match {
+      case Some(u) => TwitterUser(u.id, u.created_at, u.email.getOrElse(""), u.favourites_count,
+        u.favourites_count, u.location.getOrElse(""), u.screen_name, u.time_zone.getOrElse(""), u.utc_offset.getOrElse(0), u.verified)
+      case None => TwitterUser(0L, Instant.now(), "", 0, 0, "", "", "", 0, false)
+    }
   }
 
 }

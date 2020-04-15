@@ -2,7 +2,7 @@ package domain.entities
 
 import java.time.Instant
 
-/** Converts a tweet to tweet entity.
+/** Tweet entity.
  *  @param id the identification of this tweet from Twitter API.
  *  @param content the content from this tweet.
  *  @param from the user who posted it.
@@ -11,5 +11,5 @@ import java.time.Instant
  *  @param isRT denotes if this is RT or not.
  *  @param when when this tweet was posted.
  */
-case class Tweet(id: Long, content: String, from: String,
+case class Tweet(id: Long, content: String, from: TwitterUser,
                  likes: Int, rts: Long, isRT: Boolean, when: Instant)
