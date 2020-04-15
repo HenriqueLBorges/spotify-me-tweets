@@ -1,4 +1,5 @@
+.idea/
+docker-compose.yaml
 target/test-reports/
 target/streams/
 target/.history
-.idea/
