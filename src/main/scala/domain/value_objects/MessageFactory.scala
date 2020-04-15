@@ -26,7 +26,6 @@ case class MessageFactory[A] (enconder: Encoder[A], decoder: Decoder[A]){
    *  @param message JSON to convert.
    */
   def convertStringToMessage(message: String): Option[A] = {
-    println("convertJsonToMessage(convertJsonStringToJson(message)) =", convertJsonToMessage(convertJsonStringToJson(message)))
     convertJsonToMessage(convertJsonStringToJson(message))
   }
 

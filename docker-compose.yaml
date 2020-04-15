@@ -1,6 +1,29 @@
  
 version: '3'
 services:
+
+  spotify-me-tweets:
+    container_name: spotify-me-tweets
+    depends_on:
+      - kafka
+    build: .
+    environment:
+     - KafkaBootstrapServers=kafka:29092
+     - KafkaKeySerializer=org.apache.kafka.common.serialization.StringSerializer
+     - KafkaValueSerializer=org.apache.kafka.common.serialization.ByteArraySerializer
+     - kafkaTopic=requisitions
+     - HostPath=jsonplaceholder.typicode.com
+     - UsersPath=/users
+     - PORT=8080
+     - HOST=0.0.0.0
+     - consumerKey=
+     - consumerSecret=
+     - accessTokenKey=
+     - accessTokenSecret=
+     - hashtags=spotifyPlaylist
+    ports:
+      - "8080:8080"
+
   zookeeper:
     container_name: zookeeper
     image: confluentinc/cp-zookeeper:latest
