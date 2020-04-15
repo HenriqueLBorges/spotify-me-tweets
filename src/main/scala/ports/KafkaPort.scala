@@ -3,8 +3,7 @@ package ports
 import domain.value_objects.{IMessage, MessageTopics}
 import scala.concurrent.Future
 
-/** Kafka interface
- */
+/** Kafka interface */
 trait KafkaPort {
   /** Write messages to Kafka.
    *  @param messageTopic kafka topic to where messages will be written.

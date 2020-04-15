@@ -2,9 +2,9 @@ import adapters.KafkaAdapter
 import adapters.TwitterAdapter
 import domain.entities.Tweet
 import domain.value_objects.{MessageFactory, MessageTopics, PlaylistMessage, TweetMessage, TwitterKeys}
-import java.time.Instant
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import services.TweetParser
 
 /** App Object. */
 object App {
@@ -26,17 +26,21 @@ object App {
     Await.result(twitterStream, Duration.Inf)
     Await.result(tweetsToPost, Duration.Inf)
     Await.result(playlists, Duration.Inf)
-
   }
 
   /** Handler for tweets from Twitter Stream API.
    *  @param tweet The data in JSON format.
    */
   def twitterStreamHandler(tweet: Tweet): Unit = {
-    val playlistMessage = PlaylistMessage(MessageTopics.playlists.toString, tweet.content)
-    val tweetMessage = TweetMessage(MessageTopics.tweetsToPost.toString, tweet)
-    KafkaAdapter.writeMessage(MessageTopics.playlists, playlistMessage)
-    KafkaAdapter.writeMessage(MessageTopics.tweetsToPost, tweetMessage)
+    println("New tweet received from stream, tweet =", tweet.content)
+    val spotifyLink = "open.spotify.com/playlist"
+    val playlistLink = TweetParser.getSpecificLink(tweet, spotifyLink).getOrElse("")
+
+    if(playlistLink != ""){
+      println("New playlist found, playlist =", playlistLink)
+      val playlistMessage = new PlaylistMessage(MessageTopics.playlists.toString, playlistLink)
+      KafkaAdapter.writeMessage(MessageTopics.playlists, playlistMessage)
+    }
   }
 
   /** Handler messages from the playlist topic

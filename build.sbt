@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
   "io.circe"  %% "circe-core"   % "0.12.3",
   "io.circe"  %% "circe-generic" % "0.12.3",
   "io.circe" %% "circe-parser" % "0.12.3",
+  "org.apache.httpcomponents" % "httpclient" % "4.5.12",
   "org.apache.kafka" %% "kafka" % "2.1.0",
   "org.slf4j" % "slf4j-api" % "1.7.5",
   "org.slf4j" % "slf4j-simple" % "1.7.5"

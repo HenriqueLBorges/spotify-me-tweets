@@ -10,8 +10,7 @@ import scala.collection.JavaConversions._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-/** Kafka adapter.
- */
+/** Kafka adapter.*/
 case object KafkaAdapter extends KafkaPort {
   private val bootstrapServers: String = scala.util.Properties.envOrElse("KafkaBootstrapServers", "localhost:9092")
   private val keySerializer: String = scala.util.Properties.envOrElse("KafkaKeySerializer", "org.apache.kafka.common.serialization.StringSerializer")

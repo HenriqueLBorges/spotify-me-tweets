@@ -9,8 +9,7 @@ import ports.TwitterPort
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-/** Twitter adapter.
- */
+/** Twitter adapter.*/
 case class TwitterAdapter (twitterKeys: TwitterKeys) extends TwitterPort {
   private val consumerToken = ConsumerToken(key = twitterKeys.consumerKey, secret = twitterKeys.consumerSecret)
   private val accessToken = AccessToken(key = twitterKeys.accessTokenKey, secret = twitterKeys.accessTokenSecret)
